@@ -32,14 +32,19 @@ az acr create --name $appname --resource-group $appname --sku Basic
 
 ## Creating the AKS cluster
 ```powershell
+# allows us to use commands that are in preview
 az extension add --name aks-preview
+
+# allows container to communicate with other resources inside k8s (ex. message queue)
 az feature register --name "EnableWorkloadIdentityPreview" --namespace "Microsoft.ContainerService"
 
 # Wait for this command to reach a "Registered" state
 az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/EnableWorkloadIdentityPreview')].{Name:name,State:properties.state}"
 
+# resource provider for the container service
 az provider register --namespace Microsoft.ContainerService
 
+# create kubernetes cluster
 az aks create -n $appname -g $appname --node-vm-size Standard_B2s --node-count 2 --attach-acr $appname --enable-oidc-issuer --enable-workload-identity
 
 # Connects us to the kubernetes
