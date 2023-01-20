@@ -50,3 +50,8 @@ az aks create -n $appname -g $appname --node-vm-size Standard_B2s --node-count 2
 # Connects us to the kubernetes
 az aks get-credentials --name $appname --resource-group $appname
 ```
+
+## Creating the Azure Key Vault
+```powershell
+az keyvault create -n $appname -g $appname
+```
