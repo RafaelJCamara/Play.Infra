@@ -55,3 +55,16 @@ az aks get-credentials --name $appname --resource-group $appname
 ```powershell
 az keyvault create -n $appname -g $appname
 ```
+
+## Installing Emissary-Ingress
+```powershell
+helm repo add datawire https://app.getambassador.io
+helm repo update
+
+$namespace="emissary"
+kubectl create namespace $namespace && \
+kubectl apply -f https://app.getambassador.io/yaml/emissary/3.4.0/emissary-crds.yaml
+kubectl wait --timeout=90s --for=condition=available deployment emissary-apiext -n emissary-system
+helm install emissary-ingress --set service.annotations."service\.beta\.kubernetes\.io/azure-dns-label-name"=$appname --namespace emissary datawire/emissary-ingress && \
+kubectl -n emissary wait --for condition=available --timeout=90s deploy -lapp.kubernetes.io/instance=emissary-ingress
+```
